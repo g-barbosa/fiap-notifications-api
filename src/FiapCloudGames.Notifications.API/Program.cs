@@ -13,8 +13,10 @@ namespace FiapCloudGames.Notifications.API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<UsuarioCriadoNotificacaoService>();
+            builder.Services.AddScoped<PagamentoProcessadoNotificacaoService>();
             builder.Services.AddScoped<IEmailService, SimuladorEmailService>();
             builder.Services.AddHostedService<UsuarioCriadoConsumer>();
+            builder.Services.AddHostedService<PagamentoProcessadoConsumer>();
 
             var app = builder.Build();
 
