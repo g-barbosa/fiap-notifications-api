@@ -12,7 +12,7 @@ namespace FiapCloudGames.Notifications.Application.Services
         }
         public async Task Notificar(PagamentoProcessadoEvent evento)
         {
-            var texto = string.Empty;
+            string? texto;
             if (evento.Status == "Aprovado")
             {
                 texto = $"Olá, {evento.NomeUsuario}! Seu pedido {evento.PedidoId} foi processado com sucesso.";

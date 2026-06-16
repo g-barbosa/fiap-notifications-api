@@ -59,7 +59,7 @@ namespace FiapCloudGames.Notifications.Infrastructure.Messaging.Consumers
                 await handler.Notificar(evento);
             };
 
-            await channel.BasicConsumeAsync(queue: "usuario-criado", autoAck: true, consumer: consumer);
+            await channel.BasicConsumeAsync(queue: "pagamento-processado", autoAck: true, consumer: consumer);
         }
     }
 }
