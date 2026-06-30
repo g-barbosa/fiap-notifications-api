@@ -33,11 +33,22 @@ namespace FiapCloudGames.Notifications.Infrastructure.Messaging.Consumers
 
             var channel = await connection.CreateChannelAsync();
 
+            await channel.ExchangeDeclareAsync(
+                exchange: "pagamento-processado",
+                type: ExchangeType.Fanout,
+                durable: true,
+                autoDelete: false);
+
             await channel.QueueDeclareAsync(
-                queue: "pagamento-processado",
+                queue: "pagamento-processado-notifications",
                 durable: true,
                 exclusive: false,
                 autoDelete: false);
+
+            await channel.QueueBindAsync(
+                queue: "pagamento-processado-notifications",
+                exchange: "pagamento-processado",
+                routingKey: "");
 
             var consumer = new AsyncEventingBasicConsumer(channel);
 
@@ -59,7 +70,7 @@ namespace FiapCloudGames.Notifications.Infrastructure.Messaging.Consumers
                 await handler.Notificar(evento);
             };
 
-            await channel.BasicConsumeAsync(queue: "pagamento-processado", autoAck: true, consumer: consumer);
+            await channel.BasicConsumeAsync(queue: "pagamento-processado-notifications", autoAck: true, consumer: consumer);
         }
     }
 }
