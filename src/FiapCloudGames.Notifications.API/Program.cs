@@ -3,6 +3,9 @@ using FiapCloudGames.Notifications.Application.Interaces;
 using FiapCloudGames.Notifications.Application.Services;
 using FiapCloudGames.Notifications.Infrastructure.Email;
 using FiapCloudGames.Notifications.Infrastructure.Messaging.Consumers;
+using Serilog;
+using Prometheus;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FiapCloudGames.Notifications.API
 {
@@ -12,6 +15,30 @@ namespace FiapCloudGames.Notifications.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext()
+                .CreateLogger();
+
+            builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+            {
+                loggerConfiguration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .Enrich.FromLogContext();
+            });
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "FIAP Cloud Games API - API de Notificações"
+                });
+            });
+
+            builder.Services.AddHealthChecks();
+
             builder.Services.AddScoped<UsuarioCriadoNotificacaoService>();
             builder.Services.AddScoped<PagamentoProcessadoNotificacaoService>();
             builder.Services.AddScoped<IEmailService, SimuladorEmailService>();
@@ -20,7 +47,17 @@ namespace FiapCloudGames.Notifications.API
 
             var app = builder.Build();
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.UseHttpMetrics();
+            app.MapHealthChecks("/health");
+            app.MapMetrics();
+
             app.Run();
         }
     }
+
+    [ExcludeFromCodeCoverage]
+    public partial class Program { }
 }
