@@ -5,7 +5,6 @@ using FiapCloudGames.Notifications.Infrastructure.Email;
 using FiapCloudGames.Notifications.Infrastructure.Messaging.Consumers;
 using Serilog;
 using Prometheus;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FiapCloudGames.Notifications.API
 {
@@ -57,7 +56,4 @@ namespace FiapCloudGames.Notifications.API
             app.Run();
         }
     }
-
-    [ExcludeFromCodeCoverage]
-    public partial class Program { }
 }
